@@ -8,24 +8,24 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        $credenciais = $request->all(['email', 'password']); //[]
 
-        $credenciais = $request->all(['email', 'password']);
+        //autenticação (email e senha)
+        $token = auth('api')->attempt($credenciais);
 
-
-        // dd($credenciais);
-        //authentication
-
-        $token =  auth('api')->attempt($credenciais);
-
-        if ($token) { //usuario autenticado com sucesso
+        if($token) { //usuário autenticado com sucesso
             return response()->json(['token' => $token]);
-        } else { //erro de usuario ou senha
-            return response()->json(['erro' => 'Usuário ou senha invalido'], 403);
-            //error 403 = forbidden -> proibido (login invalido)
-            //error 401 = Unauthorized -> não autorizado
+
+        } else { //erro de usuário ou senha
+            return response()->json(['erro' => 'Usuário ou senha inválido!'], 403);
+
+            //401 = Unauthorized -> não autorizado
+            //403 = forbidden -> proibido (login inválido)
         }
 
+        //retornar um Json Web Token
         return 'login';
+
     }
     public function logout()
     {
@@ -36,9 +36,9 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        $token = auth('api')->refresh();
+       // $token = auth('api')->refresh();
 
-        return response()->json(['token' => $token]);
+       // return response()->json(['token' => $token]);
     }
     public function me()
     {
